@@ -43,14 +43,19 @@ MarketsService.prototype._updateInfo = function () {
             return self.common.log.error('Coinlib error status code', response.statusCode);
         }
 
-        if (body) {
+        // if (body) {
             var needToTrigger = false;
 
-            self.info.price = body.price;
-            self.info.price_btc = body.markets[0].price;
-            self.info.market_cap_usd = body.market_cap;
-            self.info.total_volume_24h = body.total_volume_24h;
-            self.info.delta_24h = body.delta_24h;
+            // self.info.price = body.price;
+            // self.info.price_btc = body.markets[0].price;
+            // self.info.market_cap_usd = body.market_cap;
+            // self.info.total_volume_24h = body.total_volume_24h;
+            // self.info.delta_24h = body.delta_24h;
+            self.info.price = 0;
+            self.info.price_btc = 0;
+            self.info.market_cap_usd = 0;
+            self.info.total_volume_24h = 0;
+            self.info.delta_24h = 0;
             needToTrigger = true;
 
             if (needToTrigger) {
@@ -58,9 +63,9 @@ MarketsService.prototype._updateInfo = function () {
             }
 
             return self.info;
-        }
-
-        return self.common.log.error('Coinlib error body', body);
+        // }
+        //
+        // return self.common.log.error('Coinlib error body', body);
 
     });
 
