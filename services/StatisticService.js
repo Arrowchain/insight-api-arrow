@@ -312,6 +312,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
         };
 
     return async.waterfall([function (callback) {
+        self.common.log.info('[STATISTICS Service] getJsonBlock ');
         return self.node.getJsonBlock(blockHeight, function (err, blockJson) {
             if ((err && err.code === -5) || (err && err.code === -8)) {
                 return callback(err);
@@ -328,6 +329,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
         /**
                  * Block
          */
+        self.common.log.info('[STATISTICS Service] getBlock ');
         return self.node.getBlock(blockHeight, function (err, block) {
 
             if ((err && err.code === -5) || (err && err.code === -8)) {
@@ -346,6 +348,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
         /**
          * Subsidy
          */
+        self.common.log.info('[STATISTICS Service] getBlockReward ');
         return self.getBlockReward(blockHeight, function (err, result) {
             dataFlow.subsidy = result;
             return callback();
@@ -358,7 +361,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
          */
 
 
-
+        self.common.log.info('[STATISTICS Service] Fee ');
         var transaction0 = dataFlow.block.transactions[0],
             currentVoutsAmount = 0;
 
@@ -377,7 +380,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
         /**
          * Total outputs
          */
-
+        self.common.log.info('[STATISTICS Service] total outputs ');
         var trxsExcept = [];
 
         trxsExcept.push(0);
@@ -397,7 +400,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
         /**
    * networkhashps
          */
-
+        self.common.log.info('[STATISTICS Service] getNetworkHash ');
         return self.node.getNetworkHash(blockHeight, function (err, hashps) {
 
             if ((err && err.code === -5) || (err && err.code === -8)) {
@@ -423,7 +426,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
 
         txHash = dataFlow.block.transactions[0].hash;
 
-
+        self.common.log.info('[STATISTICS Service] getDetailedTransaction ');
         return self.getDetailedTransaction(txHash, function (err, trx) {
 
             if (err) {
@@ -441,7 +444,7 @@ StatisticService.prototype._getBlockInfo = function (blockHeight, next) {
          * minedBy
          */
 
-
+        self.common.log.info('[STATISTICS Service] getBlockRewardr ');
         var reward = self.getBlockRewardr(blockHeight);
         dataFlow.transaction.outputs.forEach(function (output) {
             if (output.satoshis > (reward * 0.8)) {
