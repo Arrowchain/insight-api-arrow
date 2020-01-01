@@ -1,0 +1,95 @@
+{
+  "name": "insight-api-arrow",
+  "description": "An Arrow blockchain REST and web socket API service for bitcore-node-arrow Node.",
+  "version": "1.1.1",
+  "repository": "git://github.com/Arrowchain/insight-api-arrow.git",
+  "contributors": [
+    {
+      "name": "Gustavo Cortez",
+      "email": "cmgustavo83@gmail.com"
+    },
+    {
+      "name": "Ivan Socolsky",
+      "email": "jungans@gmail.com"
+    },
+    {
+      "name": "Juan Ignacio Sosa Lopez",
+      "email": "bechilandia@gmail.com"
+    },
+    {
+      "name": "Manuel Araoz",
+      "email": "manuelaraoz@gmail.com"
+    },
+    {
+      "name": "Matias Alejo Garcia",
+      "email": "ematiu@gmail.com"
+    },
+    {
+      "name": "Mario Colque",
+      "email": "colquemario@gmail.com"
+    },
+    {
+      "name": "Patrick Nagurny",
+      "email": "patrick@bitpay.com"
+    },
+    {
+      "name": "Braydon Fuller",
+      "email": "braydon@bitpay.com"
+    },
+    {
+      "name": "Jack Grigg",
+      "email": "jack@z.cash"
+    },
+    {
+      "name": "Tadeas Kmenta",
+      "email": "tadeas.kmenta@zel.cash"
+    },
+    {
+      "name": "Simon Liu",
+      "email": "simon@z.cash"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/Arrowchain/insight-api-arrow/issues"
+  },
+  "homepage": "https://github.com/Arrowchain/insight-api-arrow",
+  "license": "MIT",
+  "keywords": [
+    "insight",
+    "insight api",
+    "blockchain",
+    "arrow api",
+    "blockchain api",
+    "json",
+    "arrow"
+  ],
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test mocha -R spec --recursive"
+  },
+  "main": "lib",
+  "bitcoreNode": "lib",
+  "dependencies": {
+    "async": "*",
+    "bignumber.js": "^4.0.2",
+    "body-parser": "^1.13.3",
+    "compression": "^1.6.1",
+    "lodash": "^2.4.1",
+    "lru-cache": "^4.0.1",
+    "mongoose": "5.1.7",
+    "morgan": "^1.7.0",
+    "bitcore-lib-arrow": "git://github.com/Arrowchain/bitcore-lib-arrow.git",
+    "bitcore-message-arrow": "git://github.com/Arrowchain/bitcore-message-arrow.git",
+    "request": "^2.83.0"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.2",
+    "should": "^8.3.1",
+    "sinon": "^1.10.3"
+  }
+}
