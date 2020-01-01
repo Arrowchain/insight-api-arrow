@@ -35,13 +35,13 @@ MarketsService.prototype._updateInfo = function () {
         json: true
     }, function (err, response, body) {
 
-        if (err) {
-            return self.common.log.error('Coinlib error', err);
-        }
-
-        if (response.statusCode != 200) {
-            return self.common.log.error('Coinlib error status code', response.statusCode);
-        }
+        // if (err) {
+        //     return self.common.log.error('Coinlib error', err);
+        // }
+        //
+        // if (response.statusCode != 200) {
+        //     return self.common.log.error('Coinlib error status code', response.statusCode);
+        // }
 
         // if (body) {
             var needToTrigger = false;
