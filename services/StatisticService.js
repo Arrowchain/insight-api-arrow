@@ -236,10 +236,12 @@ StatisticService.prototype.processPrevBlocks = function (height, next) {
 
             if (maxAge > 0) {
                 return async.waterfall([function (callback) {
+                  self.common.log.info('[STATISTICS Service] _getBlockInfo ');
                     return self._getBlockInfo(block.height, function (err, data) {
                         return callback(err, data);
                     });
                 }, function (data, callback) {
+                  self.common.log.info('[STATISTICS Service] process24hBlock ');
                     return self.process24hBlock(data, function (err) {
                         return callback(err);
                     });
@@ -248,6 +250,7 @@ StatisticService.prototype.processPrevBlocks = function (height, next) {
                 });
 
             } else {
+              self.common.log.info('[STATISTICS Service] maxAge <= 0 ' + maxAge);
                 return callback(null, false);
             }
 
