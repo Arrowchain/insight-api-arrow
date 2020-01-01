@@ -230,6 +230,8 @@ StatisticService.prototype.processPrevBlocks = function (height, next) {
             var minTimestamp = currentDate.getTime() / 1000,
                 maxAge = (block.time - minTimestamp) * 1000;
 
+            self.common.log.info('[STATISTICS Service] processing ' + block.height);
+
             height--;
 
             if (maxAge > 0) {
