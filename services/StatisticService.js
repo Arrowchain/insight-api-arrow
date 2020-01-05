@@ -1224,7 +1224,7 @@ StatisticService.prototype.getBlockReward = function (height, callback) {
       subsidy -= new BN(rs.step * 1e8)
     }
   });
-  subsidy = subsidy.shrn(halvings);
+  // subsidy = subsidy.shrn(halvings);
   var sub = parseInt(subsidy.toString(10));
   callback(null, sub);
 };
@@ -1253,7 +1253,7 @@ StatisticService.prototype.getBlockRewardr = function (height) {
         subsidy -= new BN(rs.step * 1e8)
       }
     });
-    subsidy = subsidy.shrn(halvings);
+    // subsidy = subsidy.shrn(halvings);
 
     return parseInt(subsidy.toString(10));
 };
