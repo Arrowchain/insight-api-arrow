@@ -1280,6 +1280,16 @@ StatisticService.prototype.getTotalSupply = function () {
     var subsidy = 70;
     var supply = 0;
 
+    var rewardSteps = [
+      {height: 174720 * 1, step: 0},
+      {height: 174720 * 2, step: 15},
+      {height: 174720 * 3, step: 5},
+      {height: 174720 * 4, step: 5},
+      {height: 174720 * 5, step: 5},
+      {height: 174720 * 6, step: 5},
+      {height: 174720 * 7, step: 5}
+    ];
+
     if (blockHeight > rewardSteps[0].height) {
       supply = subsidy * rewardSteps[0].height;
     } else {
