@@ -1201,62 +1201,58 @@ StatisticService.prototype.getPoolsLastHour = function (nextCb) {
 
 };
 StatisticService.prototype.getBlockReward = function (height, callback) {
-    // Subsidy is cut in half every 840000 blocks which will occur approximately every 4 years.
-    var halvings;
-    if (height <= 20000) {
-      halvings = 0
-    } else {
-      halvings = Math.floor((height - (20000)) / 840000);
-    }
-    // Force block reward to zero when right shift is undefined.
-    if (halvings >= 64) {
-        return 0;
-    }
+  var subsidy = new BN(70 * 1e8);
+  var halvings = Math.floor(height / 2803200);
 
-    // Mining slow start
-    // The subsidy is ramped up linearly, skipping the middle payout of
-    // MAX_SUBSIDY/2 to keep the monetary curve consistent with no slow start.
-    if (height < 10000) {
-      var subsidy = new BN(12.5 * 1e8 * (height - 1) / 20000)
-    } else if (height < 20000) {
-      var subsidy = new BN(12.5 * 1e8 * height / 20000)
-    } else if (height < 653600) {
-      var subsidy = new BN(12.5 * 1e8)
-    } else {
-      var subsidy = new BN(6.25 * 1e8)
-    }
+  // Force block reward to zero when right shift is undefined.
+  if (halvings >= 64) {
+    return 0;
+  }
 
-    subsidy = subsidy.shrn(halvings);
-    var sub;
-    sub = parseInt(subsidy.toString(10));
-    callback(null, sub);
+  var rewardSteps = [
+    {height: 174720 * 1, step: 0},
+    {height: 174720 * 2, step: 15},
+    {height: 174720 * 3, step: 5},
+    {height: 174720 * 4, step: 5},
+    {height: 174720 * 5, step: 5},
+    {height: 174720 * 6, step: 5},
+    {height: 174720 * 7, step: 5}
+  ];
+
+  rewardSteps.forEach(function (rs) {
+    if (height > rs.height) {
+      subsidy -= new BN(rs.step * 1e8)
+    }
+  });
+  subsidy = subsidy.shrn(halvings);
+  var sub = parseInt(subsidy.toString(10));
+  callback(null, sub);
 };
 
 StatisticService.prototype.getBlockRewardr = function (height) {
-    // Subsidy is cut in half every 840000 blocks which will occur approximately every 4 years.
-    var halvings;
-    if (height <= 20000) {
-      halvings = 0
-    } else {
-      halvings = Math.floor((height - (20000)) / 840000);
-    }
+    var subsidy = new BN(70 * 1e8);
+    var halvings = Math.floor(height / 2803200);
+
     // Force block reward to zero when right shift is undefined.
     if (halvings >= 64) {
-        return 0;
+      return 0;
     }
 
-    // Mining slow start
-    // The subsidy is ramped up linearly, skipping the middle payout of
-    // MAX_SUBSIDY/2 to keep the monetary curve consistent with no slow start.
-    if (height < 10000) {
-      var subsidy = new BN(12.5 * 1e8 * (height - 1) / 20000)
-    } else if (height < 20000) {
-      var subsidy = new BN(12.5 * 1e8 * height / 20000)
-    } else if (height < 653600) {
-      var subsidy = new BN(12.5 * 1e8)
-    } else {
-      var subsidy = new BN(6.25 * 1e8)
-    }
+    var rewardSteps = [
+      {height: 174720 * 1, step: 0},
+      {height: 174720 * 2, step: 15},
+      {height: 174720 * 3, step: 5},
+      {height: 174720 * 4, step: 5},
+      {height: 174720 * 5, step: 5},
+      {height: 174720 * 6, step: 5},
+      {height: 174720 * 7, step: 5}
+    ];
+
+    rewardSteps.forEach(function (rs) {
+      if (height > rs.height) {
+        subsidy -= new BN(rs.step * 1e8)
+      }
+    });
     subsidy = subsidy.shrn(halvings);
 
     return parseInt(subsidy.toString(10));
@@ -1281,22 +1277,47 @@ StatisticService.prototype.getPoolInfo = function (paddress) {
 StatisticService.prototype.getTotalSupply = function () {
     var blockHeight = this.node.services.bitcoind.height;
 
-    var sum = 125000;
-    if (blockHeight >= 20000) {
-      sum = sum + ((blockHeight - 19999) * 12.5)
-      if (blockHeight >= 653600) {
-        sum = sum - ((blockHeight - 653599) * 12.5)
+    var subsidy = 70;
+    var supply = 0;
+
+    if (blockHeight > rewardSteps[0].height) {
+      supply = subsidy * rewardSteps[0].height;
+    } else {
+      supply = subsidy * blockHeight;
+    }
+    // console.log('initial supply', supply);
+
+    for (var i = 0; i < rewardSteps.length; i++) {
+      // console.log(blockHeight, rewardSteps[i].height);
+      if (blockHeight > rewardSteps[i].height) {
+        if (i > 0) {
+          // console.log('---');
+          // console.log('step', rewardSteps[i-1].step);
+          subsidy = subsidy - rewardSteps[i-1].step;
+          // console.log('nextSubsidy', subsidy);
+          var supplyIncrement = 0;
+          if (blockHeight > rewardSteps[i].height) {
+            // console.log('window', (rewardSteps[i].height - rewardSteps[i-1].height), 'blocks');
+            supplyIncrement = subsidy * (rewardSteps[i].height - rewardSteps[i-1].height)
+            // console.log('supplyIncrement', supplyIncrement);
+          }
+          supply += supplyIncrement;
+        }
+      } else {
+        // console.log('---');
+        // console.log('step', rewardSteps[i-1].step);
+        // console.log('window', (blockHeight - rewardSteps[i-1].height), 'blocks');
+        subsidy = subsidy - rewardSteps[i-1].step;
+        // console.log('nextSubsidy', subsidy);
+        supplyIncrement = subsidy * (blockHeight - rewardSteps[i-1].height);
+        // console.log('supplyIncrement', supplyIncrement);
+        supply += supplyIncrement;
+        i = rewardSteps.length;
       }
     }
-    if (blockHeight >= 653600 && blockHeight < 840000) {
-      sum = sum + ((blockHeight - 653599) * 6.25)
+    // console.log('supply', supply)
+    return new BigNumber(supply);
 
-    }
-    var coins = sum;
-
-    var supply = new BigNumber(coins); // TODO FIXME This is accurate only for blockheight > 20000
-
-    return supply;
 };
 StatisticService.prototype.mode = function (array) {
     if (!array.length) return [];

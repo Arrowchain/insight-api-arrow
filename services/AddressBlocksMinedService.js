@@ -271,33 +271,32 @@ AddressBlocksMinedService.prototype.processBlock = function (blockHeight, next) 
 };
 
 AddressBlocksMinedService.prototype.getBlockReward = function (height) {
-    // Subsidy is cut in half every 840000 blocks which will occur approximately every 4 years.
-    var halvings;
-    if (height <= 20000) {
-        halvings = 0
-    } else {
-        halvings = Math.floor((height - (20000)) / 840000);
-    }
-    // Force block reward to zero when right shift is undefined.
-    if (halvings >= 64) {
-        return 0;
-    }
+  var subsidy = new BN(70 * 1e8);
+  var halvings = Math.floor(height / 2803200);
 
-    // Mining slow start
-    // The subsidy is ramped up linearly, skipping the middle payout of
-    // MAX_SUBSIDY/2 to keep the monetary curve consistent with no slow start.
-    if (height < 10000) {
-        var subsidy = new BN(12.5 * 1e8 * (height - 1) / 20000)
-    } else if (height < 20000) {
-        var subsidy = new BN(12.5 * 1e8 * height / 20000)
-    } else if (height < 653600) {
-        var subsidy = new BN(12.5 * 1e8)
-    } else {
-        var subsidy = new BN(6.25 * 1e8)
-    }
-    subsidy = subsidy.shrn(halvings);
+  // Force block reward to zero when right shift is undefined.
+  if (halvings >= 64) {
+    return 0;
+  }
 
-    return parseInt(subsidy.toString(10));
+  var rewardSteps = [
+    {height: 174720 * 1, step: 0},
+    {height: 174720 * 2, step: 15},
+    {height: 174720 * 3, step: 5},
+    {height: 174720 * 4, step: 5},
+    {height: 174720 * 5, step: 5},
+    {height: 174720 * 6, step: 5},
+    {height: 174720 * 7, step: 5}
+  ];
+
+  rewardSteps.forEach(function (rs) {
+    if (height > rs.height) {
+      subsidy -= new BN(rs.step * 1e8)
+    }
+  });
+  subsidy = subsidy.shrn(halvings);
+
+  return parseInt(subsidy.toString(10));
 };
 
 module.exports = AddressBlocksMinedService;
